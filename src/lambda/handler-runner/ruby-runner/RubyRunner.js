@@ -12,20 +12,13 @@ export default class RubyRunner {
   #handlerPath = null
   #allowCache = false
 
-  constructor(funOptions, env, allowCache, v3Utils) {
+  constructor(funOptions, env, allowCache) {
     const { handlerName, handlerPath } = funOptions
 
     this.#env = env
     this.#handlerName = handlerName
     this.#handlerPath = handlerPath
     this.#allowCache = allowCache
-
-    if (v3Utils) {
-      this.log = v3Utils.log
-      this.progress = v3Utils.progress
-      this.writeText = v3Utils.writeText
-      this.v3Utils = v3Utils
-    }
   }
 
   // no-op
@@ -53,8 +46,6 @@ export default class RubyRunner {
         has(json, '__offline_payload__')
       ) {
         payload = json.__offline_payload__
-      } else if (this.log) {
-        this.log.notice(item)
       } else {
         console.log(item) // log non-JSON stdout to console (puts, p, logger.info, ...)
       }
@@ -98,22 +89,34 @@ export default class RubyRunner {
       },
     )
 
-    const result = await ruby
+    let result
+
+    try {
+      result = await ruby
+    } catch (err) {
+      // TODO
+      console.log(err)
+
+      throw err
+    }
 
     const { stderr, stdout } = result
 
     if (stderr) {
       // TODO
-
-      if (this.log) {
-        this.log.notice(stderr)
-      } else {
-        console.log(stderr)
-      }
+      console.log(stderr)
 
       return stderr
     }
 
-    return this._parsePayload(stdout)
+    try {
+      return this._parsePayload(stdout)
+    } catch (err) {
+      // TODO
+      console.log('No JSON')
+
+      // TODO return or re-throw?
+      return err
+    }
   }
 }

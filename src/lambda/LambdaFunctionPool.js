@@ -6,10 +6,9 @@ export default class LambdaFunctionPool {
   #serverless = null
   #timerRef = null
 
-  constructor(serverless, options, v3Utils) {
+  constructor(serverless, options) {
     this.#options = options
     this.#serverless = serverless
-    this.v3Utils = v3Utils
 
     // start cleaner
     this._startCleanTimer()
@@ -74,7 +73,6 @@ export default class LambdaFunctionPool {
         functionDefinition,
         this.#serverless,
         this.#options,
-        this.v3Utils,
       )
       this.#pool.set(functionKey, new Set([lambdaFunction]))
 
@@ -95,7 +93,6 @@ export default class LambdaFunctionPool {
         functionDefinition,
         this.#serverless,
         this.#options,
-        this.v3Utils,
       )
       lambdaFunctions.add(lambdaFunction)
 

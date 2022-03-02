@@ -38,8 +38,9 @@ export default class WebSocketConnectEvent {
 
     const headers = parseHeaders(this.#rawHeaders)
     const multiValueHeaders = parseMultiValueHeaders(this.#rawHeaders)
-    const multiValueQueryStringParameters =
-      parseMultiValueQueryStringParameters(this.#url)
+    const multiValueQueryStringParameters = parseMultiValueQueryStringParameters(
+      this.#url,
+    )
     const queryStringParameters = parseQueryStringParameters(this.#url)
 
     const requestContext = new WebSocketRequestContext(

@@ -1,16 +1,11 @@
 import serverlessLog from '../../serverlessLog.js'
 
 // FIXME "slessLog" param is only remaining for tests, should be removed
-export default function authFunctionNameExtractor(endpoint, slessLog, v3Utils) {
+export default function authFunctionNameExtractor(endpoint, slessLog) {
   const buildFailureResult = (warningMessage) => {
-    const log = v3Utils && v3Utils.log
     const _serverlessLog = slessLog || serverlessLog // FIXME remove
 
-    if (log) {
-      log.warning(warningMessage)
-    } else {
-      _serverlessLog(`WARNING: ${warningMessage}`)
-    }
+    _serverlessLog(warningMessage)
 
     return { unsupportedAuth: true }
   }
@@ -20,7 +15,7 @@ export default function authFunctionNameExtractor(endpoint, slessLog, v3Utils) {
   const handleStringAuthorizer = (authorizerString) => {
     if (authorizerString.toUpperCase() === 'AWS_IAM') {
       return buildFailureResult(
-        'Serverless Offline does not support the AWS_IAM authorization type',
+        'WARNING: Serverless Offline does not support the AWS_IAM authorization type',
       )
     }
 
@@ -32,25 +27,25 @@ export default function authFunctionNameExtractor(endpoint, slessLog, v3Utils) {
 
     if (type && type.toUpperCase() === 'AWS_IAM') {
       return buildFailureResult(
-        'Serverless Offline does not support the AWS_IAM authorization type',
+        'WARNING: Serverless Offline does not support the AWS_IAM authorization type',
       )
     }
 
     if (arn) {
       return buildFailureResult(
-        `Serverless Offline does not support non local authorizers (arn): ${arn}`,
+        `WARNING: Serverless Offline does not support non local authorizers (arn): ${arn}`,
       )
     }
 
     if (authorizerId) {
       return buildFailureResult(
-        `Serverless Offline does not support non local authorizers (authorizerId): ${authorizerId}`,
+        `WARNING: Serverless Offline does not support non local authorizers (authorizerId): ${authorizerId}`,
       )
     }
 
     if (!name) {
       return buildFailureResult(
-        'Serverless Offline supports local authorizers but authorizer name is missing',
+        'WARNING: Serverless Offline supports local authorizers but authorizer name is missing',
       )
     }
 
@@ -72,6 +67,6 @@ export default function authFunctionNameExtractor(endpoint, slessLog, v3Utils) {
   }
 
   return buildFailureResult(
-    'Serverless Offline supports only local authorizers defined as string or object',
+    'WARNING: Serverless Offline supports only local authorizers defined as string or object',
   )
 }

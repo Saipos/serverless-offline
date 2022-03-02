@@ -5,22 +5,12 @@ import debugLog from '../../../debugLog.js'
 export default class DockerImage {
   #imageNameTag = null
 
-  constructor(imageNameTag, v3Utils) {
+  constructor(imageNameTag) {
     this.#imageNameTag = imageNameTag
-    if (v3Utils) {
-      this.log = v3Utils.log
-      this.progress = v3Utils.progress
-      this.writeText = v3Utils.writeText
-      this.v3Utils = v3Utils
-    }
   }
 
   static async _pullImage(imageNameTag) {
-    if (this.log) {
-      this.log.debug(`Downloading base Docker image... (${imageNameTag})`)
-    } else {
-      debugLog(`Downloading base Docker image... (${imageNameTag})`)
-    }
+    debugLog(`Downloading base Docker image... (${imageNameTag})`)
 
     try {
       await execa('docker', [
@@ -29,17 +19,13 @@ export default class DockerImage {
         imageNameTag,
       ])
     } catch (err) {
-      if (this.log) {
-        this.log.error(err.stderr)
-      } else {
-        console.error(err.stderr)
-      }
+      console.error(err.stderr)
       throw err
     }
   }
 
   async pull() {
-    return DockerImage._memoizedPull(this.#imageNameTag, this.v3Utils)
+    return DockerImage._memoizedPull(this.#imageNameTag)
   }
 }
 

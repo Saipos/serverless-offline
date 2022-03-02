@@ -12,22 +12,19 @@ export default class JavaRunner {
   #deployPackage = null
   #allowCache = false
 
-  constructor(funOptions, env, allowCache, v3Utils) {
-    const { functionName, handler, servicePackage, functionPackage } =
-      funOptions
+  constructor(funOptions, env, allowCache) {
+    const {
+      functionName,
+      handler,
+      servicePackage,
+      functionPackage,
+    } = funOptions
 
     this.#env = env
     this.#functionName = functionName
     this.#handler = handler
     this.#deployPackage = functionPackage || servicePackage
     this.#allowCache = allowCache
-
-    if (v3Utils) {
-      this.log = v3Utils.log
-      this.progress = v3Utils.progress
-      this.writeText = v3Utils.writeText
-      this.v3Utils = v3Utils
-    }
   }
 
   // no-op
@@ -91,15 +88,9 @@ export default class JavaRunner {
       )
       result = await response.text()
     } catch (e) {
-      if (this.log) {
-        this.log.notice(
-          'Local java server not running. For faster local invocations, run "java-invoke-local --server" in your project directory',
-        )
-      } else {
-        console.log(
-          'Local java server not running. For faster local invocations, run "java-invoke-local --server" in your project directory',
-        )
-      }
+      console.log(
+        'Local java server not running. For faster local invocations, run "java-invoke-local --server" in your project directory',
+      )
 
       // Fallback invocation
       const args = [
@@ -115,14 +106,14 @@ export default class JavaRunner {
         '--serverless-offline',
       ]
       result = invokeJavaLocal(args, this.#env)
-
-      if (this.log) {
-        this.log.notice(result)
-      } else {
-        console.log(result)
-      }
+      console.log(result)
     }
 
-    return this._parsePayload(result)
+    try {
+      return this._parsePayload(result)
+    } catch (err) {
+      console.log(result)
+      return err
+    }
   }
 }

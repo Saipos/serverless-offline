@@ -5,8 +5,8 @@ import InvocationsController from './InvocationsController.js'
 const { parse } = JSON
 
 // https://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html
-export default function invocationsRoute(lambda, options, v3Utils) {
-  const invocationsController = new InvocationsController(lambda, v3Utils)
+export default function invocationsRoute(lambda, options) {
+  const invocationsController = new InvocationsController(lambda)
 
   return {
     async handler(request, h) {
@@ -45,8 +45,7 @@ export default function invocationsRoute(lambda, options, v3Utils) {
       let statusCode = 200
       let functionError = null
       if (invokeResults) {
-        const isPayloadDefined = typeof invokeResults.Payload !== 'undefined'
-        resultPayload = isPayloadDefined ? invokeResults.Payload : ''
+        resultPayload = invokeResults.Payload || ''
         statusCode = invokeResults.StatusCode || 200
         functionError = invokeResults.FunctionError || null
       }

@@ -1,9 +1,10 @@
 ---
 name: 'Feature request'
-about: 'I have a suggestion (and may want to implement it).'
+about: "I have a suggestion (and may want to implement it)."
 title: ''
 labels: 'i: enhancement, i: needs triage'
 assignees: ''
+
 ---
 
 ## Feature Request
@@ -55,6 +56,7 @@ exports.hello = async function hello() {
 **Expected behavior/code**
 
 <!-- A clear and concise description of what you expected to happen (or code). -->
+
 
 **Additional context/Screenshots**
 

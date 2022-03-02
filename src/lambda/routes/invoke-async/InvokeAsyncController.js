@@ -11,7 +11,11 @@ export default class InvokeAsyncController {
     lambdaFunction.setEvent(event)
 
     // don't await result!
-    lambdaFunction.runHandler()
+    lambdaFunction.runHandler().catch((err) => {
+      // TODO handle error
+      console.log(err)
+      throw err
+    })
 
     return {
       StatusCode: 202,

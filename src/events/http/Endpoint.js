@@ -29,15 +29,9 @@ export default class Endpoint {
   #handlerPath = null
   #http = null
 
-  constructor(handlerPath, http, v3Utils) {
+  constructor(handlerPath, http) {
     this.#handlerPath = handlerPath
     this.#http = http
-    if (v3Utils) {
-      this.log = v3Utils.log
-      this.progress = v3Utils.progress
-      this.writeText = v3Utils.writeText
-      this.v3Utils = v3Utils
-    }
 
     return this._generate()
   }
@@ -75,29 +69,23 @@ export default class Endpoint {
       const resFilename = `${this.#handlerPath}.res.vm`
 
       fep.responseContentType = getResponseContentType(fep)
-      if (this.log) {
-        this.log.debug('Response Content-Type ', fep.responseContentType)
-      } else {
-        debugLog('Response Content-Type ', fep.responseContentType)
-      }
+      debugLog('Response Content-Type ', fep.responseContentType)
 
       // load response template from http response template, or load file if exists other use default
       if (fep.response && fep.response.template) {
         fep.responses.default.responseTemplates[fep.responseContentType] =
           fep.response.template
       } else if (existsSync(resFilename)) {
-        fep.responses.default.responseTemplates[fep.responseContentType] =
-          readFile(resFilename)
+        fep.responses.default.responseTemplates[
+          fep.responseContentType
+        ] = readFile(resFilename)
       } else {
-        fep.responses.default.responseTemplates[fep.responseContentType] =
-          defaultResponseTemplate
+        fep.responses.default.responseTemplates[
+          fep.responseContentType
+        ] = defaultResponseTemplate
       }
     } catch (err) {
-      if (this.log) {
-        this.log.debug(`Error: ${err}`)
-      } else {
-        debugLog(`Error: ${err}`)
-      }
+      debugLog(`Error: ${err}`)
     }
 
     return fep

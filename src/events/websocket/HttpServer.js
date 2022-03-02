@@ -7,16 +7,9 @@ export default class HttpServer {
   #server = null
   #webSocketClients = null
 
-  constructor(options, webSocketClients, v3Utils) {
+  constructor(options, webSocketClients) {
     this.#options = options
     this.#webSocketClients = webSocketClients
-
-    if (v3Utils) {
-      this.log = v3Utils.log
-      this.progress = v3Utils.progress
-      this.writeText = v3Utils.writeText
-      this.v3Utils = v3Utils
-    }
 
     const { host, websocketPort } = options
 
@@ -36,8 +29,8 @@ export default class HttpServer {
   async start() {
     // add routes
     const routes = [
-      ...connectionsRoutes(this.#webSocketClients, this.v3Utils),
-      catchAllRoute(this.v3Utils),
+      ...connectionsRoutes(this.#webSocketClients),
+      catchAllRoute(),
     ]
     this.#server.route(routes)
 
@@ -46,33 +39,18 @@ export default class HttpServer {
     try {
       await this.#server.start()
     } catch (err) {
-      if (this.log) {
-        this.log.error(
-          `Unexpected error while starting serverless-offline websocket server on port ${websocketPort}:`,
-          err,
-        )
-      } else {
-        console.error(
-          `Unexpected error while starting serverless-offline websocket server on port ${websocketPort}:`,
-          err,
-        )
-      }
+      console.error(
+        `Unexpected error while starting serverless-offline websocket server on port ${websocketPort}:`,
+        err,
+      )
       process.exit(1)
     }
 
-    if (this.log) {
-      this.log.notice(
-        `Offline [http for websocket] listening on http${
-          httpsProtocol ? 's' : ''
-        }://${host}:${websocketPort}`,
-      )
-    } else {
-      serverlessLog(
-        `Offline [http for websocket] listening on http${
-          httpsProtocol ? 's' : ''
-        }://${host}:${websocketPort}`,
-      )
-    }
+    serverlessLog(
+      `Offline [http for websocket] listening on http${
+        httpsProtocol ? 's' : ''
+      }://${host}:${websocketPort}`,
+    )
   }
 
   // stops the server

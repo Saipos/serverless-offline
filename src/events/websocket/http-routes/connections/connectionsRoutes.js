@@ -1,8 +1,7 @@
 import ConnectionsController from './ConnectionsController.js'
 import debugLog from '../../../../debugLog.js'
 
-export default function connectionsRoutes(webSocketClients, v3Utils) {
-  const log = v3Utils && v3Utils.log
+export default function connectionsRoutes(webSocketClients) {
   const connectionsController = new ConnectionsController(webSocketClients)
 
   return [
@@ -21,11 +20,7 @@ export default function connectionsRoutes(webSocketClients, v3Utils) {
           url,
         } = request
 
-        if (log) {
-          log.debug(`got POST to ${url}`)
-        } else {
-          debugLog(`got POST to ${url}`)
-        }
+        debugLog(`got POST to ${url}`)
 
         const clientExisted = await connectionsController.send(
           connectionId,
@@ -36,11 +31,7 @@ export default function connectionsRoutes(webSocketClients, v3Utils) {
           return h.response(null).code(410)
         }
 
-        if (log) {
-          log.debug(`sent data to connection:${connectionId}`)
-        } else {
-          debugLog(`sent data to connection:${connectionId}`)
-        }
+        debugLog(`sent data to connection:${connectionId}`)
 
         return null
       },
@@ -60,11 +51,7 @@ export default function connectionsRoutes(webSocketClients, v3Utils) {
           url,
         } = request
 
-        if (log) {
-          log.debug(`got DELETE to ${url}`)
-        } else {
-          debugLog(`got DELETE to ${url}`)
-        }
+        debugLog(`got DELETE to ${url}`)
 
         const clientExisted = connectionsController.remove(connectionId)
 
@@ -72,11 +59,7 @@ export default function connectionsRoutes(webSocketClients, v3Utils) {
           return h.response(null).code(410)
         }
 
-        if (log) {
-          log.debug(`closed connection:${connectionId}`)
-        } else {
-          debugLog(`closed connection:${connectionId}`)
-        }
+        debugLog(`closed connection:${connectionId}`)
 
         return h.response(null).code(204)
       },
